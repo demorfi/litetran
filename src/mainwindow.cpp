@@ -1,14 +1,11 @@
 #include "mainwindow.h"
-#include "texttoolbar.h"
 #include "settings.h"
 #include "trayicon.h"
 #include "translate.h"
 #include "popup.h"
-#include "pronounce.h"
 #include "languagedb.h"
 #include "clipboard.h"
 #include "defines.h"
-#include "textedit.h"
 #include "qxtglobalshortcut.h"
 #include <QCloseEvent>
 #include <QApplication>
@@ -28,6 +25,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QShortcut>
+#include <QFrame>
 #ifdef APP_WM_COCOA
 #include <Carbon/Carbon.h>
 #include <CoreServices/CoreServices.h>
@@ -37,8 +35,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    source_text(new TextEdit(this)),
-    result_text(new TextEdit(this)),
+    source_text(new QTextEdit(this)),
+    result_text(new QTextBrowser(this)),
     source_combobox(new QComboBox(this)),
     result_combobox(new QComboBox(this)),
     translate_button(new QPushButton(this)),
@@ -55,12 +53,9 @@ MainWindow::MainWindow(QWidget *parent) :
     translate_shortcut(new QShortcut(this)),
     translate_shortcut_global(new QxtGlobalShortcut(this)),
     clipboard(new Clipboard(this)),
-    toolbar_source_text(new TextToolbar(this)),
-    toolbar_result_text(new TextToolbar(this)),
     settings_dialog(new Settings(this)),
     tray_icon(new TrayIcon(this)),
     translate_engine(new Translate(this)),
-    pronounce_engine(new Pronounce(this)),
     popup(new Popup(this)),
     langdb(new LanguageDB(this))
 {
@@ -96,13 +91,10 @@ MainWindow::MainWindow(QWidget *parent) :
     menu_root->addAction(action_about);
     menu_root->addAction(action_exit);
 
-    QHBoxLayout *top_layout = new QHBoxLayout;
-    top_layout->addWidget(toolbar_source_text);
-    top_layout->addStretch();
-    top_layout->addWidget(menu_button);
-
+    QFrame *splitter = new QFrame(this);
     QHBoxLayout *middle_layout = new QHBoxLayout;
-    middle_layout->addWidget(toolbar_result_text);
+    middle_layout->addWidget(menu_button);
+    middle_layout->addWidget(splitter);
     middle_layout->addWidget(source_combobox);
     middle_layout->addWidget(swap_button);
     middle_layout->addWidget(result_combobox);
@@ -110,26 +102,20 @@ MainWindow::MainWindow(QWidget *parent) :
     middle_layout->addWidget(translate_button);
 
     QVBoxLayout *main_layout = new QVBoxLayout;
-    main_layout->addLayout(top_layout);
     main_layout->addWidget(source_text);
     main_layout->addLayout(middle_layout);
     main_layout->addWidget(result_text);
 
     setCentralWidget(new QWidget(this));
     centralWidget()->setLayout(main_layout);
-
-    result_text->setReadOnly(true);
-
     connect(action_swap, SIGNAL(triggered()), this, SLOT(swap()));
     connect(action_settings, SIGNAL(triggered()), settings_dialog, SLOT(exec()));
     connect(action_exit, SIGNAL(triggered()), this, SLOT(quit()));
     connect(action_about, SIGNAL(triggered()), this, SLOT(about()));
     connect(translate_shortcut, SIGNAL(activated()), translate_button, SLOT(click()));
     connect(settings_dialog, SIGNAL(accepted()), this, SLOT(updateSettings()));
-    connect(toolbar_source_text, SIGNAL(requestCopy()), source_text, SLOT(copyAll()));
-    connect(toolbar_result_text, SIGNAL(requestCopy()), result_text, SLOT(copyAll()));
-    connect(toolbar_source_text, SIGNAL(requestPronounce()), this, SLOT(pronounceSourceText()));
-    connect(toolbar_result_text, SIGNAL(requestPronounce()), this, SLOT(pronounceResultText()));
+
+
     connect(translate_button, SIGNAL(pressed()), this, SLOT(translate()));
     connect(swap_button, SIGNAL(clicked()), this, SLOT(swap()));
     connect(source_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChanged()));
@@ -334,15 +320,7 @@ void MainWindow::updateSettings()
     }
 }
 
-void MainWindow::pronounceSourceText()
-{
-    pronounce_engine->say(sourceText(), sourceLanguage());
-}
 
-void MainWindow::pronounceResultText()
-{
-    pronounce_engine->say(resultText(), resultLanguage());
-}
 
 void MainWindow::languageChanged()
 {

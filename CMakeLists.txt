@@ -39,7 +39,6 @@ endif()
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
-find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 
 add_subdirectory(src/3rdparty)
@@ -53,29 +52,23 @@ configure_file(src/defines.h.in src/defines.h)
 
 set(HEADERS
 src/mainwindow.h
-src/texttoolbar.h
 src/settings.h
 src/trayicon.h
 src/languagedb.h
 src/translate.h
 src/request.h
-src/pronounce.h
 src/popup.h
-src/textedit.h
 src/clipboard.h)
 
 set(SOURCES
 src/main.cpp
 src/mainwindow.cpp
-src/texttoolbar.cpp
 src/settings.cpp
 src/trayicon.cpp
 src/languagedb.cpp
 src/translate.cpp
 src/request.cpp
-src/pronounce.cpp
 src/popup.cpp
-src/textedit.cpp
 src/clipboard.cpp)
 
 set(TRANSLATIONS_FILES

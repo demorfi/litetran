@@ -20,9 +20,8 @@ class TrayIcon;
 class Translate;
 class Popup;
 class LanguageDB;
-class Pronounce;
 class Clipboard;
-class TextEdit;
+
 
 #define DEFAULT_SOURCE_LANGUAGE "English"
 #define DEFAULT_RESULT_LANGUAGE "Russian"
@@ -40,8 +39,6 @@ private slots:
     void translate();
     void changeVisibility();
     void updateSettings();
-    void pronounceSourceText();
-    void pronounceResultText();
     void languageChanged();
 private:
     void changeEvent(QEvent *e);
@@ -56,8 +53,8 @@ private:
     QString about_text;
     QString about_title;
 
-    TextEdit *source_text;
-    TextEdit *result_text;
+    QTextEdit *source_text;
+    QTextBrowser *result_text;
     QComboBox *source_combobox;
     QComboBox *result_combobox;
 
@@ -77,12 +74,9 @@ private:
     QxtGlobalShortcut *translate_shortcut_global;
 
     Clipboard *clipboard;
-    TextToolbar *toolbar_source_text;
-    TextToolbar *toolbar_result_text;
     Settings *settings_dialog;
     TrayIcon *tray_icon;
     Translate *translate_engine;
-    Pronounce *pronounce_engine;
     Popup *popup;
     LanguageDB *langdb;
 protected:
