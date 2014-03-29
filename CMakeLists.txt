@@ -118,7 +118,21 @@ if(MINGW)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/litetranico.o
                        COMMAND  windres.exe -i${CMAKE_CURRENT_SOURCE_DIR}/litetran.rc
                        -o ${CMAKE_CURRENT_BINARY_DIR}/litetranico.o)
+    if(WIN32)
+        find_program(ISCC_PATH ISCC.exe iscc.exe "C:\\Program Files\\Inno Setup 5" "C:\\Program Files (x86)\\Inno Setup 5")
+        if(ISCC_PATH EQUAL "ISCC_PATH-NOTFOUND")
+            message(WARNING "Inno setup compiler not found. Couldn't create installer.")
+        else()
+            message(STATUS "Installer will be created.")
+            configure_file(dist/ltsetup.iss.in ltsetup.iss)
+            add_custom_command(TARGET ${APP_EXECUTABLE_NAME}
+                       COMMAND  ${ISCC_PATH} /O"${CMAKE_INSTALL_PREFIX}" "${CMAKE_CURRENT_BINARY_DIR}/dist/ltsetup.iss")
+
+
+        endif()
+    endif()
 endif()
+
 
 install(TARGETS ${APP_EXECUTABLE_NAME} DESTINATION ${APP_BINARY_INSTALL_PATH})
 install(FILES ${QM_FILES} DESTINATION ${APP_I18N_INSTALL_PATH})
