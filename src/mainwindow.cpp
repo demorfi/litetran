@@ -228,7 +228,7 @@ void MainWindow::changeVisibility()
 void MainWindow::changeEvent(QEvent *e) {
     QMainWindow::changeEvent(e);
     if(e->type() ==  QEvent::LanguageChange) {
-
+        retranslateUI();
     }
 }
 
