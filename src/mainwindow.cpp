@@ -144,6 +144,7 @@ MainWindow::MainWindow(bool collapsed, QWidget *parent) :
     connect(reverse_shortcut_global, &QxtGlobalShortcut::activated, this, &MainWindow::reverse);
     connect(popup, &Popup::pronounceRequested, this, &MainWindow::pronounceResultText);
 
+    retranslateUI();
     tray_icon->addAction(action_settings);
     tray_icon->addSeparator();
     tray_icon->addAction(action_swap);
@@ -227,26 +228,7 @@ void MainWindow::changeVisibility()
 void MainWindow::changeEvent(QEvent *e) {
     QMainWindow::changeEvent(e);
     if(e->type() ==  QEvent::LanguageChange) {
-        action_swap->setText(tr("Swap languages"));
-        action_settings->setText(tr("Settings"));
-        action_languages->setText(tr("Languages"));
-        action_about->setText(tr("About"));
-        action_exit->setText(tr("Exit"));
-        menu_button->setToolTip(tr("Open LiteTran menu"));
-        translate_button->setText(tr("Translate"));
-        swap_button->setToolTip(tr("Swap languages"));
-        source_combobox->setToolTip(tr("Source language"));
-        result_combobox->setToolTip(tr("Result language"));
 
-        about_title = tr("About LiteTran");
-
-        QFile file(QString("%1/about/%2.html").arg(APP_I18N_DIR, settings_dialog->language()));
-        if (!file.open(QFile::ReadOnly))
-            qWarning() << "Cannot open About dialog text file: " << file.errorString();
-        about_text = file.readAll();
-        about_text.replace("@VERSION@", APP_VERSION);
-        file.close();
-        source_text->setPlaceholderText(tr("Enter text here..."));
     }
 }
 
@@ -376,4 +358,28 @@ void MainWindow::updateLanguages()
     }
     source_combobox->setCurrentText(sl);
     result_combobox->setCurrentText(tl);
+}
+
+void MainWindow::retranslateUI()
+{
+    action_swap->setText(tr("Swap languages"));
+    action_settings->setText(tr("Settings"));
+    action_languages->setText(tr("Languages"));
+    action_about->setText(tr("About"));
+    action_exit->setText(tr("Exit"));
+    menu_button->setToolTip(tr("Open LiteTran menu"));
+    translate_button->setText(tr("Translate"));
+    swap_button->setToolTip(tr("Swap languages"));
+    source_combobox->setToolTip(tr("Source language"));
+    result_combobox->setToolTip(tr("Result language"));
+
+    about_title = tr("About LiteTran");
+
+    QFile file(QString("%1/about/%2.html").arg(APP_I18N_DIR, settings_dialog->language()));
+    if (!file.open(QFile::ReadOnly))
+        qWarning() << "Cannot open About dialog text file: " << file.errorString();
+    about_text = file.readAll();
+    about_text.replace("@VERSION@", APP_VERSION);
+    file.close();
+    source_text->setPlaceholderText(tr("Enter text here..."));
 }

@@ -42,6 +42,7 @@ private slots:
     void pronounceResultText();
     void languageChanged();
     void updateLanguages();
+    void retranslateUI();
 private:
     void translateText(const QString &sl, const QString &tl);
     void changeEvent(QEvent *e);

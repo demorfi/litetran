@@ -87,6 +87,28 @@ qt5_use_modules(${APP_EXECUTABLE_NAME} Widgets Core Network Multimedia)
 
 target_link_libraries(${APP_EXECUTABLE_NAME} qxtshortcut)
 
+include(FindPkgConfig)
+pkg_check_modules(PC_APPINDICATOR appindicator-0.1)
+find_path(APPINDICATOR_INCLUDE_DIR NAMES libappindicator/app-indicator.h
+        HINTS ${PC_APPINDICATOR_INCLUDEDIR} ${PC_APPINDICATOR_INCLUDE_DIRS}
+        PATH_SUFFIXES libappindicator-0.1)
+find_library(APPINDICATOR_LIBRARY NAMES appindicator)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(APPINDICATOR DEFAULT_MSG APPINDICATOR_LIBRARY APPINDICATOR_INCLUDE_DIR)
+if(APPINDICATOR_FOUND)
+    pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
+    if(GTK2_FOUND)
+        include_directories(
+            ${GTK2_INCLUDE_DIRS}
+            ${APPINDICATOR_INCLUDE_DIR})
+        target_link_libraries(${APP_EXECUTABLE_NAME} ${GTK2_LIBRARIES})
+        target_link_libraries(${APP_EXECUTABLE_NAME} ${APPINDICATOR_LIBRARY})
+        add_definitions(-DWITH_UNITY)
+        add_definitions(${GTK2_CFLAGS_OTHER})
+    endif(GTK2_FOUND)
+endif(APPINDICATOR_FOUND)
+mark_as_advanced(APPINDICATOR_INCLUDE_DIR APPINDICATOR_LIBRARY)
+
 if(APPLE)
     find_library(CORE_SERVICES_LIBRARY CoreServices)
     find_library(CARBON_LIBRARY Carbon)
