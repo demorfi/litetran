@@ -33,9 +33,9 @@ TrayIcon::TrayIcon(QObject *parent) :
     {
 #endif
         qt_icon = new QSystemTrayIcon(parent);
-        setContextMenu(menu);
-        setIcon(APP_ICON("litetran"));
-        connect(this, &TrayIcon::activated, this, &TrayIcon::onActivate);
+        qt_icon->setContextMenu(menu);
+        qt_icon->setIcon(APP_ICON("litetran"));
+        connect(qt_icon, &QSystemTrayIcon::activated, this, &TrayIcon::onActivate);
     }
 }
 
@@ -71,6 +71,28 @@ void TrayIcon::addSeparator() {
         gtk_widget_show(item);
     }
 #endif
+}
+
+void TrayIcon::setToolTip(QString tooltip)
+{
+    if(isUnity) {
+#ifdef WITH_UNITY
+        //TODO: set indicator tooltip
+#endif
+    } else {
+        qt_icon->setToolTip(tooltip);
+    }
+}
+
+void TrayIcon::setVisible(bool visible)
+{
+    if(isUnity) {
+#ifdef WITH_UNITY
+        //TODO: set indicator visibility
+#endif
+    } else {
+        qt_icon->setVisible(visible);
+    }
 }
 
 void TrayIcon::onActivate(QSystemTrayIcon::ActivationReason reason) {

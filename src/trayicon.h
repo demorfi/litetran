@@ -17,7 +17,7 @@ extern "C" {
 #define signals public
 #endif
 
-class TrayIcon : public QSystemTrayIcon
+class TrayIcon : public QObject
 {
     Q_OBJECT
 public:
@@ -25,6 +25,8 @@ public:
     ~TrayIcon();
     void addAction(QAction *act);
     void addSeparator();
+    void setToolTip(QString tooltip);
+    void setVisible(bool visible);
 signals:
     void clicked();
 public slots:
