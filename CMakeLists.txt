@@ -119,12 +119,10 @@ if(WIN32)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/litetranico.o
                        COMMAND  windres.exe -i${CMAKE_CURRENT_SOURCE_DIR}/litetran.rc
                        -o ${CMAKE_CURRENT_BINARY_DIR}/litetranico.o)
-else()
-    install(TARGETS ${APP_EXECUTABLE_NAME} DESTINATION ${APP_BINARY_INSTALL_PATH})
-    install(FILES ${QM_FILES} DESTINATION ${APP_I18N_INSTALL_PATH})
-    install(FILES ${ABOUT_TS} DESTINATION ${APP_I18N_INSTALL_PATH}/about)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/icons/ui/litetran.png DESTINATION ${APP_ICONS_INSTALL_PATH})
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/litetran.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 endif()
 
-
+install(TARGETS ${APP_EXECUTABLE_NAME} DESTINATION ${APP_BINARY_INSTALL_PATH})
+install(FILES ${QM_FILES} DESTINATION ${APP_I18N_INSTALL_PATH})
+install(FILES ${ABOUT_TS} DESTINATION ${APP_I18N_INSTALL_PATH}/about)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/icons/ui/litetran.png DESTINATION ${APP_ICONS_INSTALL_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/litetran.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
