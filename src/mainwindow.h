@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QTimer>
 
+class QToolBar;
 class QTextEdit;
 class QTextBrowser;
 class QComboBox;
@@ -46,6 +47,7 @@ private slots:
     void updateLanguages();
 private:
     void changeEvent(QEvent *e);
+    bool eventFilter(QObject* object, QEvent* event);
     bool applicationInFocus();
 
     QString sourceLanguage() const;
@@ -73,8 +75,7 @@ private:
     QAction *action_languages;
     QAction *action_about;
     QAction *action_exit;
-    MenuButton *menu_button;
-    QMenu *menu_root;
+    QToolBar *main_toolbar;
     QMenu *menu_tray;
     QSettings *settings;
     QTranslator *ui_translator;

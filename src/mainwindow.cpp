@@ -8,11 +8,11 @@
 #include "platform/clipboard.h"
 #include "defines.h"
 #include "textedit.h"
-#include "menubutton.h"
 #include "languages.h"
 #include "qxtglobalshortcut.h"
 #include <QCloseEvent>
 #include <QApplication>
+#include <QToolBar>
 #include <QTextEdit>
 #include <QTextBrowser>
 #include <QComboBox>
@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <QShortcut>
 #include <QCommonStyle>
+#include <QActionGroup>
 
 #define DEFAULT_SOURCE_LANGUAGE "English"
 #define DEFAULT_RESULT_LANGUAGE "Russian"
@@ -49,8 +50,7 @@ MainWindow::MainWindow(bool collapsed, QWidget *parent) :
     action_languages(new QAction(this)),
     action_about(new QAction(this)),
     action_exit(new QAction(this)),
-    menu_button(new MenuButton(this)),
-    menu_root(new QMenu(this)),
+    main_toolbar(new QToolBar(this)),
     menu_tray(new QMenu(this)),
     settings(new QSettings(this)),
     ui_translator(NULL),
@@ -83,16 +83,19 @@ MainWindow::MainWindow(bool collapsed, QWidget *parent) :
     translate_shortcut->setContext(Qt::ApplicationShortcut);
     swap_button->setShortcut(QKeySequence("Ctrl+Shift+S"));
 
-    menu_button->setMenu(menu_root);
-    menu_root->addAction(action_settings);
-    menu_root->addAction(action_languages);
-    menu_root->addSeparator();
-    menu_root->addAction(action_about);
-    menu_root->addAction(action_exit);
-
-    QHBoxLayout *top_layout = new QHBoxLayout;
-    top_layout->addStretch();
-    top_layout->addWidget(menu_button);
+    main_toolbar->addAction(action_settings);
+    main_toolbar->addAction(action_languages);
+    main_toolbar->addSeparator();
+    main_toolbar->addAction(action_about);
+    main_toolbar->addAction(action_exit);
+#ifdef APP_WM_X11
+    main_toolbar->setToolButtonStyle(Qt::ToolButtonFollowStyle);
+#else
+    main_toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+#endif
+    main_toolbar->setMovable(false);
+    main_toolbar->installEventFilter(this);
+    this->addToolBar(main_toolbar);
 
     QHBoxLayout *middle_layout = new QHBoxLayout;
     middle_layout->addWidget(source_combobox);
@@ -101,7 +104,6 @@ MainWindow::MainWindow(bool collapsed, QWidget *parent) :
     middle_layout->addWidget(translate_button);
 
     QVBoxLayout *main_layout = new QVBoxLayout;
-    main_layout->addLayout(top_layout);
     main_layout->addWidget(source_text);
     main_layout->addLayout(middle_layout);
     main_layout->addWidget(result_text);
@@ -251,7 +253,6 @@ void MainWindow::changeEvent(QEvent *e) {
         action_languages->setText(tr("Languages"));
         action_about->setText(tr("About"));
         action_exit->setText(tr("Exit"));
-        menu_button->setToolTip(tr("Open LiteTran menu"));
         translate_button->setText(tr("Translate"));
         swap_button->setToolTip(tr("Swap languages"));
         source_combobox->setToolTip(tr("Source language"));
@@ -266,6 +267,18 @@ void MainWindow::changeEvent(QEvent *e) {
         about_text.replace("@VERSION@", APP_VERSION);
         file.close();
         source_text->setPlaceholderText(tr("Enter text here..."));
+    }
+}
+
+bool MainWindow::eventFilter(QObject *object, QEvent *event) {
+    if(event->type() == QEvent::ContextMenu && (QToolBar *)object == main_toolbar) {
+        QContextMenuEvent* mevent = static_cast<QContextMenuEvent *>(event);
+        if(mevent->reason() == QContextMenuEvent::Mouse)
+            return true;
+        else
+            return false;
+    } else {
+        return QObject::eventFilter(object, event);
     }
 }
 
