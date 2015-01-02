@@ -50,11 +50,11 @@
         <file>icons/ui/media-playback-start.png</file>
         <file>icons/ui/preferences-system.png</file>
         <file>icons/ui/application-exit.png</file>
-        <file>icons/ui/swap.png</file>
         <file>icons/ui/go-next.png</file>
         <file>icons/ui/menu.png</file>
-        <file>icons/ui/languages.png</file>
         <file>icons/flags/auto.png</file>
         <file>icons/ui/window-close.png</file>
+        <file>icons/ui/view-refresh.png</file>
+        <file>icons/ui/preferences-desktop-locale.png</file>
     </qresource>
 </RCC>
