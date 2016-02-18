@@ -8,6 +8,7 @@
 #include <QDialogButtonBox>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QLineEdit>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QFormLayout>
@@ -21,6 +22,7 @@
 #define DEFAULT_LANGUAGE "English"
 #define DEFAULT_TRANSLATE_SHORTCUT "Alt+T"
 #define DEFAULT_APPEAR_SHORTCUT "Ctrl+Shift+T"
+#define DEFAULT_API "Yandex"
 
 Settings::Settings(QWidget *parent) :
     QDialog(parent),
@@ -37,7 +39,12 @@ Settings::Settings(QWidget *parent) :
     label_language(new QLabel(this)),
     groupbox_app(new QGroupBox(this)),
     groupbox_keyboard(new QGroupBox(this)),
+    groupbox_api(new QGroupBox(this)),
     button_box(new QDialogButtonBox(this)),
+    apisystem_combobox(new QComboBox(this)),
+    label_apisystem(new QLabel(this)),
+    apikey_edit(new QLineEdit(this)),
+    label_apikey(new QLabel(this)),
     autostart_manager(new AutoStart(this))
 {
     connect(translate_shortcut_checkbox, &QCheckBox::toggled, translate_shortcut_edit, &QKeySequenceEdit::setEnabled);
@@ -51,20 +58,31 @@ Settings::Settings(QWidget *parent) :
     app_layout->addRow(dictionary_checkbox);
     app_layout->addRow(autotranslate_checkbox);
 
+    QFormLayout *api_layout = new QFormLayout;
+    api_layout->addRow(label_apisystem, apisystem_combobox);
+    api_layout->addRow(label_apikey, apikey_edit);
+
     QFormLayout *keyboard_layout = new QFormLayout;
     keyboard_layout->addRow(translate_shortcut_checkbox, translate_shortcut_edit);
     keyboard_layout->addRow(appear_shortcut_checkbox, appear_shortcut_edit);
 
     groupbox_app->setLayout(app_layout);
     groupbox_keyboard->setLayout(keyboard_layout);
+    groupbox_api->setLayout(api_layout);
     QVBoxLayout *main_layout = new QVBoxLayout;
     main_layout->addWidget(groupbox_app);
+    main_layout->addWidget(groupbox_api);
     main_layout->addWidget(groupbox_keyboard);
     main_layout->addWidget(button_box);
     main_layout->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(main_layout);
 
     button_box->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    // Initialize api combobox.
+    apisystem_combobox->addItem("Yandex");
+    apisystem_combobox->addItem("Google");
+    apisystem_combobox->adjustSize();
 
     // Initialize languages combobox.
     QDir qmdir(APP_I18N_DIR);
@@ -136,6 +154,16 @@ QString Settings::language() const
     return language_combobox->currentText();
 }
 
+QString Settings::apisystem() const
+{
+    return apisystem_combobox->currentText();
+}
+
+QString Settings::apikey() const
+{
+    return apikey_edit->text();
+}
+
 QString Settings::detectSystemLanguage() const
 {
     return QLocale::languageToString(QLocale().language());
@@ -153,9 +181,12 @@ void Settings::changeEvent(QEvent *e) {
             autotranslate_checkbox->setText(tr("Auto translate text"));
             run_at_startup_checkbox->setText(tr("Add to Autostart"));
             label_language->setText(tr("Language"));
+            label_apikey->setText(tr("Key"));
+            label_apisystem->setText(tr("System"));
             setWindowTitle(tr("Settings"));
             groupbox_app->setTitle(tr("Application"));
             groupbox_keyboard->setTitle(tr("HotKeys"));
+            groupbox_api->setTitle(tr("Api"));
     }
 }
 
@@ -174,6 +205,8 @@ void Settings::accept()
     settings->setValue("TrayIconEnabled", tray_checkbox->isChecked());
     settings->setValue("ShowDictionary", dictionary_checkbox->isChecked());
     settings->setValue("AutoTranslate", autotranslate_checkbox->isChecked());
+    settings->setValue("ApiKey", apikey_edit->text());
+    settings->setValue("ApiSystem", apisystem_combobox->currentText());
     autostart_manager->setAutoStart(run_at_startup_checkbox->isChecked());
 
     QDialog::accept();
@@ -182,6 +215,8 @@ void Settings::accept()
 void Settings::read()
 {
     language_combobox->setCurrentText(settings->value("Language", default_language).toString());
+    apikey_edit->setText(settings->value("ApiKey").toString());
+    apisystem_combobox->setCurrentText(settings->value("ApiSystem", DEFAULT_API).toString());
     translate_shortcut_checkbox->setChecked(settings->value("TranslateShortcutEnabled", true).toBool());
     appear_shortcut_checkbox->setChecked(settings->value("AppearShortcutEnabled", true).toBool());
     translate_shortcut_edit->setKeySequence(settings->value("TranslateShortcut", DEFAULT_TRANSLATE_SHORTCUT).toString());

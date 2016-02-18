@@ -9,6 +9,7 @@ class QKeySequenceEdit;
 class QDialogButtonBox;
 class QLabel;
 class QGroupBox;
+class QLineEdit;
 class AutoStart;
 
 class Settings : public QDialog
@@ -23,6 +24,8 @@ class Settings : public QDialog
     Q_PROPERTY(bool autoTranslate READ autoTranslate)
     Q_PROPERTY(bool runAtStartup READ runAtStartup)
     Q_PROPERTY(QString language READ language)
+    Q_PROPERTY(QString apikey READ apikey)
+    Q_PROPERTY(QString apisystem READ apisystem)
 public:
     explicit Settings(QWidget *parent = 0);
     int exec();
@@ -35,6 +38,8 @@ public:
     QKeySequence translateShortcut() const;
     QKeySequence appearShortcut() const;
     QString language() const;
+    QString apikey() const;
+    QString apisystem() const;
 private slots:
     void accept();
 private:
@@ -45,6 +50,7 @@ private:
     QString msg_key_overlap;
     QString msg_key_overlap_title;
     QString default_language;
+    QLineEdit *apikey_edit;
     QSettings *settings;
     QCheckBox *tray_checkbox;
     QCheckBox *dictionary_checkbox;
@@ -55,9 +61,13 @@ private:
     QKeySequenceEdit *translate_shortcut_edit;
     QKeySequenceEdit *appear_shortcut_edit;
     QComboBox *language_combobox;
+    QComboBox *apisystem_combobox;
     QLabel *label_language;
+    QLabel *label_apikey;
+    QLabel *label_apisystem;
     QGroupBox *groupbox_app;
     QGroupBox *groupbox_keyboard;
+    QGroupBox *groupbox_api;
     QDialogButtonBox *button_box;
     AutoStart *autostart_manager;
 };

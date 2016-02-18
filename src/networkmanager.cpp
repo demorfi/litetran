@@ -42,6 +42,7 @@ QByteArray NetworkManager::POST(const QUrl &url, const QByteArray &data)
     req.setRawHeader("Content-Length", QByteArray::number(data.size()));
 
     QNetworkReply *reply  = qt_network_manager->post(req, data);
+    reply->ignoreSslErrors();
     m_event_loop->exec();
     checkForError(reply);
 

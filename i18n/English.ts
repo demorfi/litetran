@@ -158,6 +158,21 @@
         <source>Application</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../src/settings.cpp" line="150"/>
+        <source>Api</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/settings.cpp" line="151"/>
+        <source>System</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/settings.cpp" line="152"/>
+        <source>Key</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>TextToolbar</name>
